@@ -42,7 +42,7 @@ class ApiClient {
     }
 
     async getAVideo(id:string){
-        return this.fetch(`/videos/${id}`)
+        return this.fetch(`/videos${id}`)
     }
 
     async createVideo(videoData : VideoFormData){
