@@ -1,26 +1,29 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { IKUploadResponse } from "imagekitio-next/dist/types/components/IKUpload/props";
 import { Loader2 } from "lucide-react";
 import { useNotification } from "./Notification";
 import { apiClient } from "@/lib/api-client";
 import FileUpload from "./FileUpload";
+import { useSession } from "next-auth/react";
+
+import { ObjectId } from "mongodb";
 
 interface VideoFormData {
   title: string;
   description: string;
   videoUrl: string;
   thumbnailUrl: string;
-  uploadedBy: string;
+  uploadedBy: ObjectId;
 }
 
 export default function VideoUploadForm() {
   const [loading, setLoading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const { showNotification } = useNotification();
-
+  const { data: session } = useSession();
   const {
     register,
     handleSubmit,
@@ -32,14 +35,25 @@ export default function VideoUploadForm() {
       description: "",
       videoUrl: "",
       thumbnailUrl: "",
-      uploadedBy: ""
+      uploadedBy: session?.user.id ? new ObjectId(session.user.id) : new ObjectId(),
     },
   });
+
+  useEffect(() => {
+    if (session?.user.id) {
+      setValue("uploadedBy", new ObjectId(session.user.id));
+    }
+  }, [session, setValue]);
 
   const handleUploadSuccess = (response: IKUploadResponse) => {
     setValue("videoUrl", response.filePath);
     setValue("thumbnailUrl", response.thumbnailUrl || response.filePath);
     showNotification("Video uploaded successfully!", "success");
+  };
+
+  const handleUploadError = (error: Error) => {
+    showNotification("Failed to upload video. Please try again.", "error");
+    setUploadProgress(0);
   };
 
   const handleUploadProgress = (progress: number) => {
@@ -62,7 +76,6 @@ export default function VideoUploadForm() {
       setValue("description", "");
       setValue("videoUrl", "");
       setValue("thumbnailUrl", "");
-      setValue("uploadedBy","")
       setUploadProgress(0);
     } catch (error) {
       showNotification(
@@ -84,6 +97,7 @@ export default function VideoUploadForm() {
             errors.title ? "input-error" : ""
           }`}
           {...register("title", { required: "Title is required" })}
+          disabled={loading}
         />
         {errors.title && (
           <span className="text-error text-sm mt-1">
@@ -99,6 +113,7 @@ export default function VideoUploadForm() {
             errors.description ? "textarea-error" : ""
           }`}
           {...register("description", { required: "Description is required" })}
+          disabled={loading}
         />
         {errors.description && (
           <span className="text-error text-sm mt-1">
@@ -111,7 +126,7 @@ export default function VideoUploadForm() {
         <label className="label">Upload Video</label>
         <FileUpload
           fileType="video"
-          onSuccess={handleUploadSuccess}
+          onSuccess={handleUploadSuccess}          
           onProgress={handleUploadProgress}
         />
         {uploadProgress > 0 && (
@@ -128,7 +143,6 @@ export default function VideoUploadForm() {
         type="submit"
         className="btn btn-primary btn-block"
         disabled={loading || !uploadProgress}
-        
       >
         {loading ? (
           <>

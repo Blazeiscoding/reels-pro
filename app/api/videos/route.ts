@@ -69,3 +69,17 @@ export async function POST(request: NextRequest) {
     );
   }
 }
+import { NextApiRequest, NextApiResponse } from 'next';
+
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  const { userId } = req.query;
+
+  try {
+      const videos = await Video.find({ uploadedBy: userId })
+                                .sort({ createdAt: -1 }); // Sort by newest first
+      res.status(200).json(videos);
+  } catch (error) {
+      console.error('Failed to fetch videos:', error);
+      res.status(500).json({ error: 'Failed to fetch videos' });
+  }
+}
