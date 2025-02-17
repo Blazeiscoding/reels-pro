@@ -49,7 +49,6 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${inter.className} antialiased min-h-screen flex flex-col`}>
         <Providers>
-          {/* Skip navigation link for accessibility */}
           <a
             href="#main-content"
             className="sr-only focus:not-sr-only focus:absolute focus:p-2 focus:m-2 focus:bg-white focus:text-black focus:rounded-lg transition-all"

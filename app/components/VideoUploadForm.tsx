@@ -13,6 +13,7 @@ interface VideoFormData {
   description: string;
   videoUrl: string;
   thumbnailUrl: string;
+  uploadedBy: string;
 }
 
 export default function VideoUploadForm() {
@@ -31,6 +32,7 @@ export default function VideoUploadForm() {
       description: "",
       videoUrl: "",
       thumbnailUrl: "",
+      uploadedBy: ""
     },
   });
 
@@ -60,6 +62,7 @@ export default function VideoUploadForm() {
       setValue("description", "");
       setValue("videoUrl", "");
       setValue("thumbnailUrl", "");
+      setValue("uploadedBy","")
       setUploadProgress(0);
     } catch (error) {
       showNotification(
@@ -125,6 +128,7 @@ export default function VideoUploadForm() {
         type="submit"
         className="btn btn-primary btn-block"
         disabled={loading || !uploadProgress}
+        
       >
         {loading ? (
           <>

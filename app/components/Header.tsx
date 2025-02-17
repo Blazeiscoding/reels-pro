@@ -68,7 +68,17 @@ export default function Header() {
                         Video Upload
                       </Link>
                     </li>
-
+                    <li>
+                      <Link
+                        href="/profile"
+                        className="px-4 py-2 hover:bg-base-200 block w-full"
+                        onClick={() =>
+                          showNotification(`Welcome to your ${session.user.email?.split("@")[0]}`,"info")
+                        }
+                      >
+                        Profile
+                      </Link>
+                    </li>
                     <li>
                       <button
                         onClick={handleSignOut}
