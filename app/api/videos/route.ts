@@ -71,7 +71,7 @@ export async function POST(request: NextRequest) {
 }
 import { NextApiRequest, NextApiResponse } from 'next';
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export  async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { userId } = req.query;
 
   try {
